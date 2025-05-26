@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-c {
+    @apply btn shadow-none border-white text-white rounded-md;
+  }
+
+  .text-c {
+    @apply text-text-color text-base;
+  }
+
+  .h2-c {
+    @apply text-c text-lg;
+  }
+
+  .a-c {
+    @apply underline text-base text-brand-color;
+  }
+
+  .solid-btn-c {
+    @apply btn-c bg-brand-color;
+  }
+
+  .thin-btn-c {
+    @apply btn-c bg-gray-50 text-brand-color border-brand-color;
+  }
+
+  .form-c {
+    @apply w-full border px-3 py-2 rounded text-c bg-white border-brand-color focus:border-brand-color focus:outline-none;
+  }
+}

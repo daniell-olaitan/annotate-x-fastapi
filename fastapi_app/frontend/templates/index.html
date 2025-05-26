@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html class="h-full bg-gray-50" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title%}AnnotateX{% endblock %}</title>
+  <link rel="stylesheet" href="{{url_for('static', path='dist/css/output.css')}}">
+</head>
+<body class="flex flex-col h-full">
+  {% block content %}{% endblock %}
+</body>
+</html>

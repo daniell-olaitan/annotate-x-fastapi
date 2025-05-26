@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <div id="project"></div>
+
+  {% if project_id %}
+    <script>window.config = {username: "{{ username }}", projectId: "{{ project_id }}"}</script>
+  {% else %}
+    <script>window.config = {username: "{{ username }}"}</script>
+  {% endif %}
+  <script type="module" src="{{ url_for('static', path='src/js/pages/Home.js') }}"></script>
+{% endblock %}
