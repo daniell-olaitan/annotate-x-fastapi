@@ -1,7 +1,6 @@
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-import os
 import logging
 import string
 import random
@@ -10,8 +9,8 @@ import hashlib
 import time
 import httpx
 
-from werkzeug.datastructures import FileStorage
-from src.model import Image
+from src.models import Image
+from fastapi_app import settings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 # Cloudinary configuration
 cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    cloud_name=settings.cloudinary_cloud_name,
+    api_key=settings.cloudinary_api_key,
+    api_secret=settings.cloudinary_api_secret
 )
 
 
@@ -38,11 +37,11 @@ class ImageUtil:
     def __init__(self, retries: int = 1) -> None:
         self.retries = retries
 
-    async def async_upload_images(self, files: list[tuple], folder: str) -> list[dict]:
+    async def upload_images(self, files: list[tuple], folder: str) -> list[dict]:
         async def upload(client: httpx.AsyncClient, file: tuple):
-            cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME")
-            api_key = os.getenv("CLOUDINARY_API_KEY")
-            api_secret = os.getenv("CLOUDINARY_API_SECRET")
+            cloud_name=settings.cloudinary_cloud_name
+            api_key=settings.cloudinary_api_key
+            api_secret=settings.cloudinary_api_secret
             timestamp = str(int(time.time()))
 
             # Build signature string
@@ -90,10 +89,8 @@ class ImageUtil:
                     logger.error(f"Failed to upload image after {self.retries} attempts.")
                     raise
 
-    def upload_images(self, files: list[FileStorage], folder: str) -> list[dict]:
-        return asyncio.run(self.async_upload_images(files, folder))
 
-    async def async_fetch_images(self, urls: list[str]) -> list[httpx.Response]:
+    async def fetch_images(self, urls: list[str]) -> list[httpx.Response]:
         async def fetch(client: httpx.AsyncClient, url: str) -> httpx.Response:
             response = await client.get(url)
             response.raise_for_status()
@@ -119,15 +116,13 @@ class ImageUtil:
                     logger.error(f"Failed to download images after {self.retries} attempts.")
                     raise
 
-    def fetch_images(self, urls: str) -> list[httpx.Response]:
-        return asyncio.run(self.async_fetch_images(urls))
 
     def delete_image(self, image: Image) -> None:
         attempt = 0
         while attempt < self.retries:
             try:
-                public_id = image.url.rsplit('/', 2)[1:]
-                public_id = public_id[0] + '/' + public_id[1].rsplit('.', 1)[0]
+                public_id = image.url.rsplit('/', 3)[1:]
+                public_id = '/'.join(public_id).rsplit('.', 1)[0]
 
                 logger.info(f"Deleting image: {public_id}")
                 response = cloudinary.uploader.destroy(public_id)

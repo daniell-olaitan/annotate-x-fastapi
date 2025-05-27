@@ -14,7 +14,7 @@ class BaseORM(SQLModel):
         return {
             k: v
             for k, v in super().model_dump().items()
-            if k != 'created_at'
+            if k != 'created_at' and not k.endswith('_id')
         }
 
 
