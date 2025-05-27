@@ -18,7 +18,7 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.mount('/static', StaticFiles(directory='fastapi_app/frontend/static'), name='static')
     app.add_exception_handler(HTTPException, handle_httpexception)
-    app.add_exception_handler(RequestValidationError, handle_validation_exception)
+    # app.add_exception_handler(RequestValidationError, handle_validation_exception)
     app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
 
     SQLModel.metadata.create_all(engine)

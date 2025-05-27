@@ -10,4 +10,19 @@ class UserSchema(BaseModel):
 
 class OutputJSON(BaseModel):
     status: str = 'success'
-    data: dict = {}
+    data: dict | list = {}
+
+
+class CategorySchema(BaseModel):
+    id: str
+    name: str
+    color: str
+
+
+class AnnotationSchema(BaseModel):
+    x: float
+    y: float
+    height: float
+    width: float
+    id: str
+    category: CategorySchema

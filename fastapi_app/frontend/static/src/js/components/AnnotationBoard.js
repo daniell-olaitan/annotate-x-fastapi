@@ -372,6 +372,7 @@ export function AnnotationBoard({ projectId, setError, setLoading, setSaving }) 
         });
 
         if (!res.ok) {
+          console.log(await res.json());
           let error = new Error('Failed to create project');
 
           if (res.status === 401) {
@@ -405,8 +406,8 @@ export function AnnotationBoard({ projectId, setError, setLoading, setSaving }) 
 
     const project = createProject();
 
-    formImages.forEach((img, index) => {
-      project.append(`image-${index}`, img);
+    formImages.forEach((img) => {
+      project.append('files', img);
     });
 
     createNewProject(project);
@@ -452,8 +453,8 @@ export function AnnotationBoard({ projectId, setError, setLoading, setSaving }) 
 
     const proj = new FormData();
 
-    formImages.forEach((img, index) => {
-      proj.append(`image-${index}`, img);
+    formImages.forEach((img) => {
+      proj.append('files', img);
     });
 
     editProject(proj);
