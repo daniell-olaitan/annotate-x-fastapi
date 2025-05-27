@@ -105,18 +105,18 @@ class DemoRepository(ABC):
 
 
 ## Implementations of the Model Repositories
-class BaseSQLAlchemyRepository:
+class BaseSQLModelRepository:
     def __init__(self, session: Session) -> None:
         self._session = session
         super().__init__()
 
 
-class SQLAlchemyUserRepsitory(BaseSQLAlchemyRepository, UserRepository):
+class SQLModelUserRepsitory(BaseSQLModelRepository, UserRepository):
     def add(self, user: User) -> str:
         import bcrypt
 
         password_hash = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
-        user_orm = UserORM(password=password_hash, **user.to_dict())
+        user_orm = UserORM(password=password_hash.decode('utf-8'), **user.to_dict())
         self._session.add(user_orm)
 
         return user_orm.id
@@ -150,7 +150,7 @@ class SQLAlchemyUserRepsitory(BaseSQLAlchemyRepository, UserRepository):
             self._session.delete(user_orm)
 
 
-class SQLAlchemyProjectRepository(BaseSQLAlchemyRepository, ProjectRepository):
+class SQLModelProjectRepository(BaseSQLModelRepository, ProjectRepository):
     def add(self, project: Project, user_id: str) -> str:
         project_orm = ProjectORM(user_id=user_id, **project.to_dict())
         self._session.add(project_orm)
@@ -279,7 +279,7 @@ class SQLAlchemyProjectRepository(BaseSQLAlchemyRepository, ProjectRepository):
         return project
 
 
-class SQLAlchemyImageRepository(BaseSQLAlchemyRepository, ImageRepository):
+class SQLModelImageRepository(BaseSQLModelRepository, ImageRepository):
     def add(self, image: Image, project_id: str) -> str:
         image_orm = ImageORM(project_id=project_id, **image.to_dict())
         self._session.add(image_orm)
@@ -307,7 +307,7 @@ class SQLAlchemyImageRepository(BaseSQLAlchemyRepository, ImageRepository):
         self._session.commit()
 
 
-class SQLAlchemyAnnotationRepository(AnnotationRepository, BaseSQLAlchemyRepository):
+class SQLModelAnnotationRepository(AnnotationRepository, BaseSQLModelRepository):
     def add(self, annotation: Annotation, image_id: str, category_id: str) -> str:
         annotation_orm = AnnotationORM(category_id=category_id, image_id=image_id, **annotation.to_dict())
         self._session.add(annotation_orm)
@@ -315,7 +315,7 @@ class SQLAlchemyAnnotationRepository(AnnotationRepository, BaseSQLAlchemyReposit
         return annotation_orm.id
 
 
-class SQLAlchemyCategoryRepository(CategoryRepository, BaseSQLAlchemyRepository):
+class SQLModelCategoryRepository(CategoryRepository, BaseSQLModelRepository):
     def add(self, category: Category, project_id: str) -> str:
         category_orm = CategoryORM(project_id=project_id, **category.to_dict())
         self._session.add(category_orm)
@@ -332,7 +332,7 @@ class SQLAlchemyCategoryRepository(CategoryRepository, BaseSQLAlchemyRepository)
         return Category(**category_orm.model_dump())
 
 
-class SQLAlchemyDemoRepository(DemoRepository, BaseSQLAlchemyRepository):
+class SQLModelDemoRepository(DemoRepository, BaseSQLModelRepository):
     def get_image_urls(self) -> list[str]:
         return [
             demo.url

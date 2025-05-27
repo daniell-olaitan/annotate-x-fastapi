@@ -10,11 +10,18 @@ class BaseORM(SQLModel):
     id: str = Field(..., primary_key=True)
     created_at:  datetime = Field(default_factory=datetime.now)
 
+    def model_dump(self) -> dict:
+        return {
+            k: v
+            for k, v in super().model_dump().items()
+            if k != 'created_at'
+        }
+
 
 class AnnotationORM(BaseORM, table=True):
     __tablename__ = 'annotations'
     image_id: str = Field(..., foreign_key='images.id', ondelete='CASCADE')
-    category_id: str = Field(..., foreign_key='images.id', ondelete='CASCADE')
+    category_id: str = Field(..., foreign_key='categories.id', ondelete='CASCADE')
     x: float
     y: float
     height: float
@@ -37,6 +44,7 @@ class ImageORM(BaseORM, table=True):
     width: float
     height: float
 
+    project: 'ProjectORM' = Relationship(back_populates='images')
     annotations: list[AnnotationORM] = Relationship(back_populates='image', cascade_delete=True)
 
 
@@ -46,6 +54,7 @@ class CategoryORM(BaseORM, table=True):
     name: str
     color: str
 
+    project: 'ProjectORM' = Relationship(back_populates='categories')
     annotations: list[AnnotationORM] = Relationship(back_populates='category', cascade_delete=True)
 
 
@@ -54,6 +63,7 @@ class ProjectORM(BaseORM, table=True):
     name: str = Field(..., unique=True)
     user_id: str = Field(..., foreign_key='users.id', ondelete='CASCADE')
 
+    user: 'UserORM' = Relationship(back_populates='projects')
     categories: list[CategoryORM] = Relationship(back_populates='project', cascade_delete=True)
     images: list[ImageORM] = Relationship(back_populates='project', cascade_delete=True)
 

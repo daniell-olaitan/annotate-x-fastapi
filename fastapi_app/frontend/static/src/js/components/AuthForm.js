@@ -64,13 +64,13 @@ export function AuthForm({ title, type, setProcessing, setError }) {
             throw error;
         }
 
-        if (res.status === 200) {
+
           if (type === 'signin') {
             window.location.href = '/';
           } else {
             window.location.href = '/signin';
           }
-        }
+
       } catch (err) {
         setError(err.message);
         setTimeout(() => setError(''), 3000);
