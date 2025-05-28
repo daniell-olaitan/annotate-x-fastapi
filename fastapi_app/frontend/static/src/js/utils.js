@@ -70,7 +70,6 @@ export const saveAnnotation = async ({pId, imgId, body, setError, setSaving }) =
     });
 
     if (!res.ok) {
-      console.log(await res.json());
       let error = new Error('Failed to save changes');
 
       if (res.status === 401) {
