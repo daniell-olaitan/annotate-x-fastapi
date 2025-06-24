@@ -45,10 +45,9 @@ async def demo_signin(
 
         # Handle Categories (classes)
         categories = [
-            ('class1', 'purple'),
-            ('class2', 'brown'),
-            ('class3', 'green'),
-            ('class4', 'blue')
+            ('car', 'purple'),
+            ('bus', 'brown'),
+            ('van', 'blue')
         ]
 
         for name, color in categories:
